@@ -1,0 +1,40 @@
+name: AI Code Review (rules + Claude)
+description: Reviews pull requests against your team's rules. Regex rules always run; plain-language guidelines are checked by Claude when an API key is set.
+author: atiqah89
+branding:
+  icon: check-circle
+  color: purple
+
+inputs:
+  github-token:
+    description: Token used to read the PR and post the review.
+    default: ${{ github.token }}
+  anthropic-api-key:
+    description: Anthropic API key. Leave empty for rules-only mode (for example on fork PRs, where secrets are unavailable).
+    required: false
+    default: ""
+  rules-file:
+    description: Path to the rules JSON file in your repository.
+    default: .github/review-rules.json
+  model:
+    description: Claude model used for the guideline review.
+    default: claude-sonnet-5-5
+  max-diff-chars:
+    description: Diff characters sent to the model. Larger PRs are truncated (rules still run on everything).
+    default: "60000"
+  max-comments:
+    description: Maximum inline comments per review. The rest are listed in the summary.
+    default: "25"
+  fail-on:
+    description: Fail the check when a finding has this severity or higher (error, warning, info), or never.
+    default: error
+
+outputs:
+  findings:
+    description: Total number of findings.
+  errors:
+    description: Number of error-severity findings.
+
+runs:
+  using: node24
+  main: src/index.js

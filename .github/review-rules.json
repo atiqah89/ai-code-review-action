@@ -1,0 +1,55 @@
+{
+  "guidelines": [
+    "Never log access tokens, refresh tokens, API keys or full request headers.",
+    "Calls to third-party APIs must handle 401 (refresh) and 429 (back off) instead of failing the whole sync.",
+    "New database tables in Supabase migrations must enable row level security and add at least one policy.",
+    "Public functions that change behaviour need a test in the same PR.",
+    "Error messages shown to customers must not expose stack traces or internal IDs."
+  ],
+  "rules": [
+    {
+      "id": "no-hardcoded-secret",
+      "pattern": "(api[_-]?key|secret|password|client[_-]?secret)\\s*[:=]\\s*['\"][^'\"\\s]{12,}['\"]",
+      "flags": "i",
+      "severity": "error",
+      "message": "Looks like a hard-coded secret. Load it from configuration or a secret store instead."
+    },
+    {
+      "id": "no-token-in-logs",
+      "pattern": "(console\\.(log|info|debug)|logger?\\.(Log\\w*|info|debug))\\(.*(token|secret|authorization)",
+      "flags": "i",
+      "severity": "error",
+      "message": "This log line may print a token or secret. Log the token's presence or last 4 characters only."
+    },
+    {
+      "id": "no-console-log",
+      "pattern": "console\\.log\\(",
+      "severity": "warning",
+      "files": ["*.ts", "*.js"],
+      "exclude": ["scripts/**", "*.test.js", "*.spec.ts"],
+      "message": "Remove debugging console.log, or use the app logger."
+    },
+    {
+      "id": "todo-needs-ticket",
+      "pattern": "\\bTODO\\b(?!\\([A-Z][A-Z0-9]+-\\d+\\))",
+      "severity": "info",
+      "message": "TODOs should reference a ticket, e.g. TODO(WXI-123), so they don't get lost."
+    },
+    {
+      "id": "rls-disabled",
+      "pattern": "disable\\s+row\\s+level\\s+security",
+      "flags": "i",
+      "severity": "error",
+      "files": ["*.sql"],
+      "message": "Disabling RLS exposes the table to every client holding the anon key."
+    },
+    {
+      "id": "sync-over-async",
+      "pattern": "\\.(Result|Wait\\(\\))\\b",
+      "severity": "warning",
+      "files": ["*.cs"],
+      "message": "Blocking on a Task (.Result / .Wait()) can deadlock and starves the thread pool. Use await."
+    }
+  ],
+  "ignore": ["package-lock.json", "*.min.js", "dist/**", "**/*.snap"]
+}

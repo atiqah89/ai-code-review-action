@@ -1,0 +1,21 @@
+{
+  "name": "ai-code-review-action",
+  "version": "1.0.0",
+  "description": "GitHub Action that reviews pull requests against team rules, with optional Claude-powered guideline checks.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "github-action",
+    "code-review",
+    "claude",
+    "llm"
+  ],
+  "author": "atiqah89",
+  "license": "MIT"
+}
